@@ -141,7 +141,7 @@ class Image_Explainer(object):
 
     def explain_instance(self, image, classifier_fn, labels=(1,),
                          hide_color=None,
-                         top_labels=5, num_features=100000, num_samples=1000,
+                         top_labels=10, num_features=100000, num_samples=1000,
                          batch_size=10,
                          segmentation_fn=None,
                          distance_metric='cosine',
@@ -237,7 +237,7 @@ class ImageExplanation(object):
         self.local_pred = None
 
     def get_image_and_mask(self, label, positive_only=True, hide_rest=False,
-                           num_features=5, min_weight=0.):
+                           num_features=10, min_weight=0.):
 
         if label not in self.local_exp:
             raise KeyError('label not in explanation')
@@ -275,7 +275,7 @@ segmenter = Segmentation('slic', n_segments=100, compactness=1, sigma=1)
 explanation = explain_instance(X_test[0], classifier_fn = pipeline_imp.predict_proba, top_labels=6, hide_color=0, num_samples=10000, segmentation_fn=segmenter)
 
 
-temp, mask = explanation.get_image_and_mask(y_test[0], positive_only=True, num_features=5, hide_rest=False)
+temp, mask = explanation.get_image_and_mask(y_test[0], positive_only=True, num_features=10, hide_rest=False)
 fig, (ax1, ax2) = plt.subplots(1,2, figsize = (8, 4))
 ax1.imshow(label2rgb(mask,temp, bg_label = 0), interpolation = 'nearest')
 ax1.set_title('Positive regions for {}'.format(y_test[0]))
@@ -287,7 +287,7 @@ ax2.set_title('Positive and Negative regions combined for {}'.format(y_test[0]))
 # same person
 fig, m_axs = plt.subplots(2,6, figsize = (12,4))
 for i, (c_ax, gt_ax) in zip(explanation.top_labels, m_axs.T):
-    temp, mask = explanation.get_image_and_mask(i, positive_only=True, num_features=5, hide_rest=False, min_weight=0.01)
+    temp, mask = explanation.get_image_and_mask(i, positive_only=True, num_features=10, hide_rest=False, min_weight=0.01)
     c_ax.imshow(label2rgb(mask,temp, bg_label = 0), interpolation = 'nearest')
     c_ax.set_title('Positive for {}\nScore:{:2.3f}%'.format(i, 100*pipe_pred[0, i]))
     c_ax.axis('off')
@@ -308,7 +308,7 @@ explanation = explainer.explain_instance(X_test[wrong_idx],
 # different person or random
 fig, m_axs = plt.subplots(2,6, figsize = (12,4))
 for i, (c_ax, gt_ax) in zip(explanation.top_labels, m_axs.T):
-    temp, mask = explanation.get_image_and_mask(i, positive_only=True, num_features=5, hide_rest=False, min_weight=0.01)
+    temp, mask = explanation.get_image_and_mask(i, positive_only=True, num_features=10, hide_rest=False, min_weight=0.01)
     c_ax.imshow(label2rgb(mask,temp, bg_label = 0), interpolation = 'nearest')
     c_ax.set_title('Positive for {}\nScore:{:2.2f}%'.format(i, 100*pipe_pred[wrong_idx, i]))
     c_ax.axis('off')
